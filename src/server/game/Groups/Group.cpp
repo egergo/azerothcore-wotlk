@@ -1459,6 +1459,9 @@ void Group::CountTheRoll(Rolls::iterator rollI, Map* allowedMap)
                         item->rollWinnerGUID = player->GetGUID();
                         player->SendEquipError(msg, nullptr, nullptr, roll->itemid);
                     }
+
+                    // roll->
+                    // creature->ForceValuesUpdateAtIndex(UNIT_DYNAMIC_FLAGS);
                 }
             }
             else
@@ -1582,6 +1585,15 @@ void Group::CountTheRoll(Rolls::iterator rollI, Map* allowedMap)
         {
             // Deactivate chest if the last item was rolled in group
             loot->sourceGameObject->SetLootState(GO_JUST_DEACTIVATED);
+        }
+    }
+
+    if (Loot* loot = roll->getLoot(); loot && loot->sourceCreature) {
+        if (loot->isLooted()) {
+            loot->sourceCreature->AllLootRemovedFromCorpse();
+            loot->sourceCreature->RemoveDynamicFlag(UNIT_DYNFLAG_LOOTABLE);
+        } else {
+            loot->sourceCreature->ForceValuesUpdateAtIndex(UNIT_DYNAMIC_FLAGS);
         }
     }
 

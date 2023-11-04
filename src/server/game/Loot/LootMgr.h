@@ -123,6 +123,7 @@ class Player;
 class LootStore;
 class ConditionMgr;
 class GameObject;
+class Creature;
 struct Loot;
 
 struct LootStoreItem
@@ -329,6 +330,7 @@ struct Loot
     ObjectGuid containerGUID;
     ObjectGuid sourceWorldObjectGUID;
     GameObject* sourceGameObject{nullptr};
+    Creature* sourceCreature{nullptr};
 
     Loot(uint32 _gold = 0) : gold(_gold) { }
     ~Loot() { clear(); }
