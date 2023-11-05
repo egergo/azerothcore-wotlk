@@ -160,6 +160,8 @@ services:
     tty: true
     image: acore/ac-wotlk-dev-server:${DOCKER_IMAGE_TAG:-master}
     user: ${DOCKER_USER:-root}
+    networks:
+      - ac-network
     build:
       context: .
       dockerfile: ./apps/docker/Dockerfile.dev-server
@@ -174,19 +176,21 @@ services:
       AC_DATA_DIR: "/azerothcore/env/dist/data"
       AC_LOGS_DIR: "/azerothcore/env/dist/logs"
       AC_LOGIN_DATABASE_INFO: "ac-database;3306;root;${DOCKER_DB_ROOT_PASSWORD:-password};acore_auth"
-      AC_WORLD_DATABASE_INFO: "ac-database;3306;root;${DOCKER_DB_ROOT_PASSWORD:-password};acore_world"
-      AC_CHARACTER_DATABASE_INFO: "ac-database;3306;root;${DOCKER_DB_ROOT_PASSWORD:-password};acore_characters"
+      AC_WORLD_DATABASE_INFO: "ac-database;3306;root;${DOCKER_DB_ROOT_PASSWORD:-password};acore_world_dev"
+      AC_CHARACTER_DATABASE_INFO: "ac-database;3306;root;${DOCKER_DB_ROOT_PASSWORD:-password};acore_characters_dev"
+      AC_REALM_ID: "2"
     ports:
-      - ${DOCKER_AUTH_EXTERNAL_PORT:-3724}:3724
-      - ${DOCKER_WORLD_EXTERNAL_PORT:-8085}:8085
-      - ${DOCKER_SOAP_EXTERNAL_PORT:-7878}:7878
+      # - ${DOCKER_AUTH_EXTERNAL_PORT:-3724}:3724
+      - ${DOCKER_WORLD_EXTERNAL_PORT:-8086}:8085
+      # - ${DOCKER_SOAP_EXTERNAL_PORT:-7878}:7878
     volumes:
       - ${DOCKER_VOL_ROOT:-.}:/azerothcore:cached
       # [osxfs optimization]: https://stackoverflow.com/a/63437557/1964544
       - ac-build-dev:/azerothcore/var/build
       - ac-ccache-dev:/azerothcore/var/ccache
       # this is not the directory of the extracted data! It's the client folder used by the extractors
-      - ${DOCKER_AC_CLIENT_FOLDER:-./var/client}:/azerothcore/env/dist/bin/Data
+      #- ${DOCKER_AC_CLIENT_FOLDER:-./var/client}:/azerothcore/env/dist/bin/Data
+      - ${DOCKER_VOL_DATA:-ac-client-data}:/azerothcore/env/dist/data/:ro
     # Activate with `docker compose --profile dev ...`
     profiles: [dev]
     depends_on:
