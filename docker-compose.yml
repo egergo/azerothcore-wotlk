@@ -197,6 +197,22 @@ services:
       ac-database:
         condition: service_healthy
 
+
+  ac-database-backup:
+    container_name: ac-database-backup
+    image: mysql:8.0
+    command: bash -e /backup/backup.sh
+    networks:
+      - ac-network
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DOCKER_DB_ROOT_PASSWORD:-password}
+    volumes:
+      - ./env/backup:/backup
+    depends_on:
+      ac-database:
+        condition: service_healthy
+
 volumes:
   ac-database:
   ac-client-data:
